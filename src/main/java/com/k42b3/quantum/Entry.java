@@ -23,6 +23,7 @@ package com.k42b3.quantum;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
@@ -44,20 +45,23 @@ public class Entry
 		// logging
 		Layout layout = new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN);
 
-		Logger.getLogger("com.k42b3.quantum").setLevel(Level.ALL);
 		Logger.getLogger("com.k42b3.quantum").addAppender(new WriterAppender(layout, System.out));
 
 		// options
 		Options options = new Options();
-		options.addOption("p", false, "Port for the web server default is 8080");
-		options.addOption("i", false, "The interval how often each worker gets triggered in minutes default is 2");
+		options.addOption("p", "port", false, "Port for the web server default is 8080");
+		options.addOption("i", "interval", false, "The interval how often each worker gets triggered in minutes default is 2");
+		options.addOption("d", "database", false, "Path to the sqlite database default is \"quantum.db\"");
+		options.addOption("l", "log", false, "Defines the log level default is ERROR possible is (ALL, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF)");
+		options.addOption("v", "version", false, "Shows the current version");
+		options.addOption("h", "help", false, "Shows the help");
 
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = parser.parse(options, args);
 
 		// start app
 		Quantum app = new Quantum();
-		
+
 		if(cmd.hasOption("p"))
 		{
 			try
@@ -71,7 +75,7 @@ public class Entry
 				Logger.getLogger("com.k42b3.quantum").info("Port must be an integer");
 			}
 		}
-		
+
 		if(cmd.hasOption("i"))
 		{
 			try
@@ -84,6 +88,38 @@ public class Entry
 			{
 				Logger.getLogger("com.k42b3.quantum").info("Interval must be an integer");
 			}
+		}
+
+		if(cmd.hasOption("d"))
+		{
+			String dbPath = cmd.getOptionValue("d");
+			
+			if(!dbPath.isEmpty())
+			{
+				app.setDbPath(dbPath);
+			}
+		}
+
+		if(cmd.hasOption("l"))
+		{
+			Logger.getLogger("com.k42b3.quantum").setLevel(Level.toLevel(cmd.getOptionValue("l")));
+		}
+		else
+		{
+			Logger.getLogger("com.k42b3.quantum").setLevel(Level.ERROR);
+		}
+
+		if(cmd.hasOption("v"))
+		{
+			System.out.println("Version: " + Quantum.VERSION);
+			System.exit(0);
+		}
+
+		if(cmd.hasOption("h"))
+		{
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("quantum.jar", options);
+			System.exit(0);
 		}
 
 		app.run();
