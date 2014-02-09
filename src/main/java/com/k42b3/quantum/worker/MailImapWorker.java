@@ -125,7 +125,7 @@ public class MailImapWorker extends WorkerAbstract
 			inbox.close(false);
 			store.close();
 		}
-		catch (MessagingException e)
+		catch (Exception e)
 		{
 			logger.error(e.getMessage(), e);
 		}
