@@ -3,7 +3,7 @@
   <groupId>com.k42b3.quantum</groupId>
   <artifactId>quantum</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>0.0.1</version>
   <name>quantum</name>
   <url>https://github.com/k42b3/quantum</url>
   <properties>
